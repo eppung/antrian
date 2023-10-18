@@ -6,20 +6,20 @@
 					<div class="login-title">
 						<h2 class="text-center text-primary">Tambah Data Loket</h2>
 					</div>
-					<form>
+					<form id="loket-form" action="<?= base_url().'Administrator/simpanLoket' ?>">
 
 						<div class="input-group custom">
-							<input type="text" class="form-control form-control-lg" placeholder="Nama Loket">
+							<input type="text" class="form-control form-control-lg" placeholder="Nama Loket" name="nama_loket">
 							<div class="input-group-append custom"> </div>
 						</div>
 						<div class="input-group custom">
-							<input type="text" class="form-control form-control-lg" placeholder="Kode Loket">
+							<input type="text" class="form-control form-control-lg" placeholder="Kode Loket" name="kode_loket">
 							<div class="input-group-append custom"></div>
 						</div>
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="input-group mb-0">
-									<input class="btn btn-primary btn-lg btn-block" value="Simpan" type="submit">
+									<input class="btn btn-primary btn-lg btn-block" value="Simpan" type="submit" id="simpan-loket">
 									<a class="btn btn-primary btn-lg btn-block" href="javasctipt:;"
 										data-dismiss="modal">Tutup</a>
 								</div>

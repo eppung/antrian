@@ -6,10 +6,9 @@
     <meta charset="utf-8">
     <title>Antrian terintegrasi</title>
 
+    
     <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url().'assets/vendors/images/apple-touch-icon.png' ?>">
-    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url().'assets/vendors/images/favicon-32x32.png' ?>">
-    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url().'assets/vendors/images/favicon-16x16.png"' ?>>
+	<?= $this->view('nav/site-favicon','',TRUE); ?>
 
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -68,6 +67,19 @@
                                     <img src="<?= base_url().'assets/vendors/images/custom/queue.svg' ?>" alt="">
                                 </div>
                                 <h5 class="padding-top-10 h5" style="color:#c262c7;">Mesin Antrian</h5>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-12 mb-30"  >
+                    <div class="card-box pd-30 height-100-p">
+                        <div class="progress-box text-center">
+                            <a href="<?= base_url().'Loket/index'?>">
+                                <!-- <input type="text" class="knob dial1" value="80" data-width="120" data-height="120" data-linecap="round" data-thickness="0.12" data-bgColor="#fff" data-fgColor="#1b00ff" data-angleOffset="180" readonly> -->
+                                <div class="img pb-30">
+                                    <img src="<?= base_url().'assets/vendors/images/custom/icon-pendaftaran-png.png' ?>" alt="">
+                                </div>
+                                <h5 class="padding-top-10 h5" style="color:black;">Pemanggilan</h5>
                             </a>
                         </div>
                     </div>
