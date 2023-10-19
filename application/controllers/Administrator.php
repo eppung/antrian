@@ -7,8 +7,9 @@ class Administrator extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->library('Datatables','tabel');
-        
+        $this->load->library('Datatables', 'tabel');
+        $this->load->model('Administrator_model', 'model');
+
     }
 
     public function index()
@@ -16,16 +17,26 @@ class Administrator extends CI_Controller
         $this->load->view('administrator/index');
     }
 
-    function datatables() {
-        
+    function datatables()
+    {
+
     }
 
-    function simpanLoket() {
-        
-        
+    function simpanLoket()
+    {
+        $data = array(
+            "nama_loket" => $_POST['nama_loket'],
+            "aktif" => 1
+        );
 
-        echo json_encode($_POST);
+        $query = $this->model->insert($data);
         
+        if ( $query == 1) {
+            echo json_encode(array('status' => 'success'));
+        } else {
+            echo json_encode(array('status' => $query));
+            
+        }
     }
 }
 

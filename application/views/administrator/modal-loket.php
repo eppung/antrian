@@ -1,4 +1,4 @@
-<div class="modal fade" id="loket-modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+<div class="modal fade" id="loket_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
 		aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered" style="width: fit-content;">
 			<div class="modal-content">
@@ -6,15 +6,11 @@
 					<div class="login-title">
 						<h2 class="text-center text-primary">Tambah Data Loket</h2>
 					</div>
-					<form id="loket-form" action="<?= base_url().'Administrator/simpanLoket' ?>">
+					<form id="loket-form" name="loket_form" action="<?= base_url().'Administrator/simpanLoket' ?>">
 
 						<div class="input-group custom">
-							<input type="text" class="form-control form-control-lg" placeholder="Nama Loket" name="nama_loket">
+							<input type="text" class="form-control form-control-lg" placeholder="Nama Loket" name="nama_loket" style="text-transform:uppercase">
 							<div class="input-group-append custom"> </div>
-						</div>
-						<div class="input-group custom">
-							<input type="text" class="form-control form-control-lg" placeholder="Kode Loket" name="kode_loket">
-							<div class="input-group-append custom"></div>
 						</div>
 						<div class="row">
 							<div class="col-sm-12">
