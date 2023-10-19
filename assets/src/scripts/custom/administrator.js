@@ -101,7 +101,7 @@ $('#tabel-loket tbody').on('click', '.edit-loket', function () {
     $("#judul").text("Edit Data");
     $("#nama_loket").val(namaLoket);
     $("#id_loket").val(id);
-    $('#loket_aktif').val("0");
+    $('#loket_aktif').val(aktif);
     $("#div_status").attr('hidden', false);
   });
 
