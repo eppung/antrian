@@ -39,6 +39,7 @@ class Administrator extends CI_Controller
         }
     }
 
+    
     function loketDatatable()
     {
         // CodeIgniter 3 Example
@@ -53,10 +54,23 @@ class Administrator extends CI_Controller
          * and the second is the codeigniter version (3 or 4) 
          */
         $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
-       
+        $datatables->only(['nama_loket', 'aktif']);
+
         // Add extra column
         $datatables->addColumn('action', function ($row) {
-            return '<a href="url/to/delete/post/'.$row->id_loket.'">Delete</a>';
+            return '<td>
+            <div class="dropdown">
+                <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
+                    href="#" role="button" data-toggle="dropdown">
+                    <i class="dw dw-more"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                    <a class="edit-loket dropdown-item" href="javascript:;" id="'.$row->id_loket.'"><i class="dw dw-edit2"></i> Edit</a>
+                    <a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i>
+                        Delete</a>
+                </div>
+            </div>
+        </td>';
         });
 
         // Add squence number
@@ -66,7 +80,10 @@ class Administrator extends CI_Controller
         $datatables->addSequenceNumber('rowNumber'); // It will be rowNumber
 
         $datatables->generate(); // done
-    }
+    
+    
+    
+        }
 }
 
 /* End of file Administrator.php and path \application\controllers\Administrator.php */

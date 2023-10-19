@@ -6,7 +6,7 @@ function validasi_loket() {
         document.loket_form.nama_loket.focus();
         return false;
     }
-    
+
 }
 
 function validasi_layanan() {
@@ -46,6 +46,7 @@ $("#loket-form").submit(function (e) {
             var obj = JSON.parse(data);
             console.log(obj.status);
             if (obj.status == "success") {
+                $("#tabel-loket").DataTable().ajax.reload();
                 swal(
                     {
                         position: 'top-end',
@@ -54,8 +55,8 @@ $("#loket-form").submit(function (e) {
                         showConfirmButton: false,
                         timer: 1000
                     }
-                    )
-                    $("#loket_modal").modal("hide");
+                )
+                $("#loket_modal").modal("hide");
             } else {
                 swal(
                     {
@@ -72,11 +73,35 @@ $("#loket-form").submit(function (e) {
 //end simpan data
 
 //loket datatable
-$('#tabel-loket').DataTable({
+var table = $('#tabel-loket').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
-      url: base_url+'./administrator/loketDatatable', // Change with your own
-      method: 'GET', // You are freely to use POST or GET
-    },    
-  })
+        url: base_url + './administrator/loketDatatable', // Change with your own
+        method: 'GET', // You are freely to use POST or GET
+    },columnDefs:[
+        {targets:2,render: function (data,type,row) {
+            if (row[2] == "1") {
+                return 'Aktif'
+            } else {
+                return 'Nonaktif'
+            }
+        }}
+    ]
+});
+
+$('#tabel-loket tbody').on('click', '.edit-loket', function () {
+    var row = $(this).closest('tr');
+    var id = $(this).attr("id");
+    
+    var namaLoket = table.row( row ).data()[1];
+    var aktif = table.row( row ).data()[2];
+
+    $("#loket_modal").modal({backdrop: 'static',keyboard: true, show: true});
+    $("#judul").text("Edit Data");
+    $("#nama_loket").val(namaLoket);
+    $("#id_loket").val(id);
+    $('#loket_aktif').val("0");
+    $("#div_status").attr('hidden', false);
+  });
+
