@@ -70,3 +70,13 @@ $("#loket-form").submit(function (e) {
     });
 });
 //end simpan data
+
+//loket datatable
+$('#tabel-loket').DataTable({
+    processing: true,
+    serverSide: true,
+    ajax: {
+      url: base_url+'./administrator/loketDatatable', // Change with your own
+      method: 'GET', // You are freely to use POST or GET
+    },    
+  })

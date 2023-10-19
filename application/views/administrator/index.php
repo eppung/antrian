@@ -93,8 +93,8 @@
 						<table class="data-table table stripe hover nowrap" id="tabel-loket">
 							<thead>
 								<tr>
+									<th class="table-plus datatable-nosort">No</th>
 									<th class="table-plus datatable-nosort">Nama Loket</th>
-									<th>Kode</th>
 									<th>Status</th>
 									<th class="datatable-nosort">Aksi</th>
 								</tr>
@@ -116,6 +116,10 @@
 		</div>
 	</div>
 
+	<script>
+		var base_url = "<?= base_url() ?>";
+	</script>
+
 	<!-- js -->
 	<script src="<?= base_url() . 'assets/vendors/scripts/core.js' ?>"></script>
 	<script src="<?= base_url() . 'assets/vendors/scripts/script.min.js' ?>"></script>
@@ -134,7 +138,6 @@
 	<script src="<?= base_url() . 'assets/src/scripts/custom/validation/ajax.js' ?>"></script>
 	<script src="<?= base_url() . 'assets/src/scripts/custom/validation/core.js' ?>"></script>
 	<script src="<?= base_url() . 'assets/src/scripts/custom/administrator.js' ?>"></script>
-
 	
 
 
