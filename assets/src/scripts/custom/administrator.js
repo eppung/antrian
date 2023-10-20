@@ -30,13 +30,6 @@ function validasi_layanan() {
 }
 //end validasi form kosong
 
-//ketika modal ditutup
-// $("#loket_modal").on("hide.bs.modal", function () {
-//     $(loket_form).trigger('reset');
-//     $('input').removeClass('form-control-danger');
-// });
-//end ketika modal ditutup
-
 //simpan data
 $("#loket-form").submit(function (e) {
    
@@ -128,10 +121,8 @@ $('#tabel-loket tbody').on('click', '.edit-loket', function () {
 $('#tabel-loket tbody').on('click', '.delete-loket', function () {
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
-
     var namaLoket = table.row(row).data()[1];
     var aktif = table.row(row).data()[2];
-
     swal({
         title: 'Hapus data?',
         text: "Data akan dinonaktifkan",
