@@ -39,7 +39,22 @@ class Administrator extends CI_Controller
         }
     }
 
-    
+    function deleteLoket() {
+
+        $data = array(
+            "id_loket" => $_POST["id_loket"],
+        );
+
+        $query = $this->model->delete($data);
+
+        if ($query == 1) {
+            echo json_encode(array("status"=> "success"));
+        } else {
+            echo json_encode(array("status"=> $query));
+        }
+    }
+
+
     function loketDatatable()
     {
         // CodeIgniter 3 Example
@@ -65,9 +80,8 @@ class Administrator extends CI_Controller
                     <i class="dw dw-more"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="edit-loket dropdown-item" href="javascript:;" id="'.$row->id_loket.'"><i class="dw dw-edit2"></i> Edit</a>
-                    <a class="dropdown-item" href="#"><i class="dw dw-delete-3"></i>
-                        Delete</a>
+                    <a class="edit-loket dropdown-item" href="javascript:;" id="' . $row->id_loket . '"><i class="dw dw-edit2"></i>Edit</a>
+                    <a class="delete-loket dropdown-item" href="javascript:;" id="' . $row->id_loket . '"><i class="dw dw-delete-3"></i>Hapus</a>
                 </div>
             </div>
         </td>';
@@ -80,10 +94,10 @@ class Administrator extends CI_Controller
         $datatables->addSequenceNumber('rowNumber'); // It will be rowNumber
 
         $datatables->generate(); // done
-    
-    
-    
-        }
+
+
+
+    }
 }
 
 /* End of file Administrator.php and path \application\controllers\Administrator.php */

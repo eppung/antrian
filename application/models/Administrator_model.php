@@ -18,6 +18,25 @@ class Administrator_model extends CI_Model
         }
     }
 
+// $this->db->affected_rows();
+
+    function delete($data) {
+        $query = $this->db->where('id_loket', $data["id_loket"])->delete('loket');
+        
+        
+        echo "<pre>";
+        print_r ($query->delete('loket'));
+        echo "</pre>";
+        
+        // if ($query->affected_rows() == 1) {
+        //     return true;
+        // }else {
+        //     return "Gagal Memproses";
+        // }
+        
+        
+    }
+
 }
 
 

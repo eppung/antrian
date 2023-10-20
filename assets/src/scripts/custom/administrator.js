@@ -90,6 +90,7 @@ var table = $('#tabel-loket').DataTable({
     ]
 });
 
+//modal untuk edit loket
 $('#tabel-loket tbody').on('click', '.edit-loket', function () {
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
@@ -105,3 +106,60 @@ $('#tabel-loket tbody').on('click', '.edit-loket', function () {
     $("#div_status").attr('hidden', false);
   });
 
+
+  //nonaktifkan data loket
+  $('#tabel-loket tbody').on('click', '.delete-loket', function () {
+    var row = $(this).closest('tr');
+    var id = $(this).attr("id");
+    
+    var namaLoket = table.row( row ).data()[1];
+    var aktif = table.row( row ).data()[2];
+
+    
+        swal({
+            title: 'Hapus data?',
+            text: "Data akan dinonaktifkan",
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Batal',
+            confirmButtonClass: 'btn btn-success margin-5',
+            cancelButtonClass: 'btn btn-danger margin-5',
+            buttonsStyling: false
+        }).then(
+            result => {
+                // handle confirm
+                if (result.value) {
+                    // handle confirm
+                    // swal(
+                    //     'Deleted!',
+                    //     'Your file has been deleted.',
+                    //     'success'
+                    // )
+                    $.ajax({
+                        type: "POST",
+                        url: base_url+"Administrator/deleteLoket",
+                        data: {id_loket : id,nama_loket : namaLoket},
+                        dataType: "json",
+                        success: function (response) {
+                            console.log(response);
+                            if (condition) {
+                                
+                            } else {
+                                
+                            }
+                        }
+                    });
+                  } else {
+                    // handle dismiss, result.dismiss can be 'cancel', 'overlay', 'close', and 'timer'
+                    swal(
+                        'Cancelled',
+                        'Your imaginary file is safe :)',
+                        'error'
+                    )
+                  }
+              },
+              
+        )
+    
+  });
