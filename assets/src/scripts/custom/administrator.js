@@ -145,6 +145,7 @@ $('#tabel-loket tbody').on('click', '.edit-loket', function () {
                             console.log(response);
                             if (condition) {
                                 
+                                
                             } else {
                                 
                             }
