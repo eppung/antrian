@@ -13,7 +13,6 @@ function validasi_loket() {
         document.loket_form.nama_loket.focus();
         return false;
     }
-
 }
 
 function validasi_layanan() {
@@ -32,50 +31,50 @@ function validasi_layanan() {
 
 //simpan data
 $("#loket-form").submit(function (e) {
-   
+
     if (document.loket_form.nama_loket.value == "") {
         $(loket_form.nama_loket).addClass("form-control-danger");
         document.loket_form.nama_loket.focus();
         return false;
-    }else{
-    var form = $(this);
-    var btntxt = $("#simpan-loket", form).val();
-    $("#simpan-loket", form).val('Tunggu...');
-    e.preventDefault();
-   
-    var url = form.attr('action');
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: form.serialize(),
-        success: function (data) {
-            var obj = JSON.parse(data);
-            console.log(obj.status);
-            if (obj.status == "success") {
-                $("#tabel-loket").DataTable().ajax.reload();
-                swal(
-                    {
-                        position: 'top-end',
-                        type: 'success',
-                        title: 'Data berhasil disimpan',
-                        showConfirmButton: false,
-                        timer: 1000
-                    }
-                )
-                $("#loket_modal").modal("hide");
-            } else {
-                swal(
-                    {
-                        type: 'warning',
-                        title: 'Oops...',
-                        text: 'Data sudah ada',
-                    }
-                )
+    } else {
+        var form = $(this);
+        var btntxt = $("#simpan-loket", form).val();
+        $("#simpan-loket", form).val('Tunggu...');
+        e.preventDefault();
+
+        var url = form.attr('action');
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(),
+            success: function (data) {
+                var obj = JSON.parse(data);
+                console.log(obj.status);
+                if (obj.status == "success") {
+                    $("#tabel-loket").DataTable().ajax.reload();
+                    swal(
+                        {
+                            position: 'top-end',
+                            type: 'success',
+                            title: 'Data berhasil disimpan',
+                            showConfirmButton: false,
+                            timer: 1000
+                        }
+                    )
+                    $("#loket_modal").modal("hide");
+                } else {
+                    swal(
+                        {
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: 'Data sudah ada',
+                        }
+                    )
+                }
+                $("#simpan-loket", form).val(btntxt);
             }
-            $("#simpan-loket", form).val(btntxt);
-        }
-    });
-}
+        });
+    }
 });
 //end simpan data
 
@@ -101,7 +100,7 @@ var table = $('#tabel-loket').DataTable({
 
 //modal untuk edit loket
 $('#tabel-loket tbody').on('click', '.edit-loket', function () {
-    
+
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
 
