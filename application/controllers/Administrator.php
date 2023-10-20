@@ -17,19 +17,15 @@ class Administrator extends CI_Controller
         $this->load->view('administrator/index');
     }
 
-  
-
     function simpanLoket()
     {
-        
-        
+
         if ($_POST['id_loket'] != null) {
-            
+
             $this->updateLoket();
 
         } else {
-            
-          
+
             $data = array(
                 "nama_loket" => $_POST['nama_loket'],
                 "aktif" => 1
@@ -49,19 +45,19 @@ class Administrator extends CI_Controller
     function updateLoket()
     {
         $data = array(
-            'id_loket'=>$_POST['id_loket'],
-            'nama_loket'=>$_POST['nama_loket'],
-            'aktif'=>$_POST['loket_aktif'],
-    );
-    $query = $this->model->updateLoket($data);
+            'id_loket' => $_POST['id_loket'],
+            'nama_loket' => $_POST['nama_loket'],
+            'aktif' => $_POST['loket_aktif'],
+        );
+        $query = $this->model->updateLoket($data);
 
-    if ($query == 1) {
-        echo json_encode(array('status' => 'success'));
-    } else {
-        echo json_encode(array('status' => $query));
+        if ($query == 1) {
+            echo json_encode(array('status' => 'success'));
+        } else {
+            echo json_encode(array('status' => $query));
 
-    }
-        
+        }
+
     }
 
     function deleteLoket()
@@ -79,7 +75,6 @@ class Administrator extends CI_Controller
             echo json_encode(array("status" => $query));
         }
     }
-
 
     function loketDatatable()
     {
@@ -120,8 +115,6 @@ class Administrator extends CI_Controller
         $datatables->addSequenceNumber('rowNumber'); // It will be rowNumber
 
         $datatables->generate(); // done
-
-
 
     }
 }
