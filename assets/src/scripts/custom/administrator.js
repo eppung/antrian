@@ -1,4 +1,11 @@
 
+$(document).ready(function () {
+    var originalForm = $("#dalam_loket").clone();
+    $("#loket_modal").on("hide.bs.modal", function () {
+        $("#dalam_loket").replaceWith(originalForm.clone());
+    });
+});
+
 // validasi form kosong
 function validasi_loket() {
     if (document.loket_form.nama_loket.value == "") {
@@ -24,19 +31,25 @@ function validasi_layanan() {
 //end validasi form kosong
 
 //ketika modal ditutup
-$("#loket_modal").on("hide.bs.modal", function () {
-    $(loket_form).trigger('reset');
-    $('input').removeClass('form-control-danger');
-});
+// $("#loket_modal").on("hide.bs.modal", function () {
+//     $(loket_form).trigger('reset');
+//     $('input').removeClass('form-control-danger');
+// });
 //end ketika modal ditutup
 
 //simpan data
 $("#loket-form").submit(function (e) {
-    validasi_loket();
+   
+    if (document.loket_form.nama_loket.value == "") {
+        $(loket_form.nama_loket).addClass("form-control-danger");
+        document.loket_form.nama_loket.focus();
+        return false;
+    }else{
     var form = $(this);
     var btntxt = $("#simpan-loket", form).val();
     $("#simpan-loket", form).val('Tunggu...');
     e.preventDefault();
+   
     var url = form.attr('action');
     $.ajax({
         type: "POST",
@@ -69,6 +82,7 @@ $("#loket-form").submit(function (e) {
             $("#simpan-loket", form).val(btntxt);
         }
     });
+}
 });
 //end simpan data
 
@@ -79,87 +93,93 @@ var table = $('#tabel-loket').DataTable({
     ajax: {
         url: base_url + './administrator/loketDatatable', // Change with your own
         method: 'GET', // You are freely to use POST or GET
-    },columnDefs:[
-        {targets:2,render: function (data,type,row) {
-            if (row[2] == "1") {
-                return 'Aktif'
-            } else {
-                return 'Nonaktif'
+    }, columnDefs: [
+        {
+            targets: 2, render: function (data, type, row) {
+                if (row[2] == "1") {
+                    return 'Aktif'
+                } else {
+                    return 'Nonaktif'
+                }
             }
-        }}
+        }
     ]
 });
 
 //modal untuk edit loket
 $('#tabel-loket tbody').on('click', '.edit-loket', function () {
+    
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
-    
-    var namaLoket = table.row( row ).data()[1];
-    var aktif = table.row( row ).data()[2];
 
-    $("#loket_modal").modal({backdrop: 'static',keyboard: true, show: true});
+    var namaLoket = table.row(row).data()[1];
+    var aktif = table.row(row).data()[2];
+
+    $("#loket_modal").modal({ backdrop: 'static', keyboard: true, show: true });
     $("#judul").text("Edit Data");
     $("#nama_loket").val(namaLoket);
     $("#id_loket").val(id);
     $('#loket_aktif').val(aktif);
     $("#div_status").attr('hidden', false);
-  });
+});
 
 
-  //nonaktifkan data loket
-  $('#tabel-loket tbody').on('click', '.delete-loket', function () {
+//nonaktifkan data loket
+$('#tabel-loket tbody').on('click', '.delete-loket', function () {
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
-    
-    var namaLoket = table.row( row ).data()[1];
-    var aktif = table.row( row ).data()[2];
 
-    
-        swal({
-            title: 'Hapus data?',
-            text: "Data akan dinonaktifkan",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Ya',
-            cancelButtonText: 'Batal',
-            confirmButtonClass: 'btn btn-success margin-5',
-            cancelButtonClass: 'btn btn-danger margin-5',
-            buttonsStyling: false
-        }).then(
-            result => {
+    var namaLoket = table.row(row).data()[1];
+    var aktif = table.row(row).data()[2];
+
+    swal({
+        title: 'Hapus data?',
+        text: "Data akan dinonaktifkan",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Batal',
+        confirmButtonClass: 'btn btn-success margin-5',
+        cancelButtonClass: 'btn btn-danger margin-5',
+        buttonsStyling: false
+    }).then(
+        result => {
+            // handle confirm
+            if (result.value) {
                 // handle confirm
-                if (result.value) {
-                    // handle confirm
-                    // swal(
-                    //     'Deleted!',
-                    //     'Your file has been deleted.',
-                    //     'success'
-                    // )
-                    $.ajax({
-                        type: "POST",
-                        url: base_url+"Administrator/deleteLoket",
-                        data: {id_loket : id,nama_loket : namaLoket},
-                        dataType: "json",
-                        success: function (response) {
-                            console.log(response);
-                            if (condition) {
-                                
-                            } else {
-                                
-                            }
+                $.ajax({
+                    type: "POST",
+                    url: base_url + "Administrator/deleteLoket",
+                    data: { id_loket: id, nama_loket: namaLoket },
+                    dataType: "json",
+                    success: function (response) {
+                        if (response.status == "success") {
+                            swal(
+                                'Terhapus!',
+                                'Berhasil diproses.',
+                                'success'
+                            )
+                            $('#tabel-loket').DataTable().ajax.reload();
+                        } else {
+                            swal(
+                                'Gagal!',
+                                response.status,
+                                'warning'
+                            )
+                            $('#tabel-loket').DataTable().ajax.reload();
                         }
-                    });
-                  } else {
-                    // handle dismiss, result.dismiss can be 'cancel', 'overlay', 'close', and 'timer'
-                    swal(
-                        'Cancelled',
-                        'Your imaginary file is safe :)',
-                        'error'
-                    )
-                  }
-              },
-              
-        )
-    
-  });
+                    }
+                });
+            } else {
+                // handle dismiss, result.dismiss can be 'cancel', 'overlay', 'close', and 'timer'
+                swal(
+                    'Batal',
+                    'Proses dibatalkan',
+                    'error'
+                )
+            }
+        },
+
+    )
+
+});

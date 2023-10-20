@@ -17,29 +17,55 @@ class Administrator extends CI_Controller
         $this->load->view('administrator/index');
     }
 
-    function datatables()
-    {
-
-    }
+  
 
     function simpanLoket()
     {
-        $data = array(
-            "nama_loket" => $_POST['nama_loket'],
-            "aktif" => 1
-        );
+        
+        
+        if ($_POST['id_loket'] != null) {
+            
+            $this->updateLoket();
 
-        $query = $this->model->insert($data);
-
-        if ($query == 1) {
-            echo json_encode(array('status' => 'success'));
         } else {
-            echo json_encode(array('status' => $query));
+            
+          
+            $data = array(
+                "nama_loket" => $_POST['nama_loket'],
+                "aktif" => 1
+            );
 
+            $query = $this->model->insert($data);
+
+            if ($query == 1) {
+                echo json_encode(array('status' => 'success'));
+            } else {
+                echo json_encode(array('status' => $query));
+
+            }
         }
     }
 
-    function deleteLoket() {
+    function updateLoket()
+    {
+        $data = array(
+            'id_loket'=>$_POST['id_loket'],
+            'nama_loket'=>$_POST['nama_loket'],
+            'aktif'=>$_POST['loket_aktif'],
+    );
+    $query = $this->model->updateLoket($data);
+
+    if ($query == 1) {
+        echo json_encode(array('status' => 'success'));
+    } else {
+        echo json_encode(array('status' => $query));
+
+    }
+        
+    }
+
+    function deleteLoket()
+    {
 
         $data = array(
             "id_loket" => $_POST["id_loket"],
@@ -48,9 +74,9 @@ class Administrator extends CI_Controller
         $query = $this->model->delete($data);
 
         if ($query == 1) {
-            echo json_encode(array("status"=> "success"));
+            echo json_encode(array("status" => "success"));
         } else {
-            echo json_encode(array("status"=> $query));
+            echo json_encode(array("status" => $query));
         }
     }
 
