@@ -66,7 +66,7 @@
 
 					</div>
 					<div class="pb-20">
-						<table class="data-table table stripe hover nowrap" id="tabel-poli">
+						<table class="data-table table stripe hover nowrap" id="tabel-layanan">
 							<thead>
 								<tr>
 									<th class="table-plus datatable-nosort">Nama Layanan</th>

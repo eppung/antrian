@@ -117,6 +117,75 @@ class Administrator extends CI_Controller
         $datatables->generate(); // done
 
     }
+
+    //LAYANAN
+    function simpanLayanan()
+    {
+        if ($_POST["kode_layanan"] == null) {
+            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $randomString = '';
+         
+            for ($i = 0; $i < 4; $i++) {
+                $index = rand(0, strlen($characters) - 1);
+                $randomString .= $characters[$index];
+            }
+            do {
+                $exist = $this->model->cekKodaLayanan($randomString);
+            } while ($exist >= 1);
+        }
+
+echo "<pre>";
+print_r ($randomString);
+echo "</pre>";
+
+        exit;
+            $data = array(
+                "nama_loket" => $_POST['nama_loket'],
+                "aktif" => 1
+            );
+
+            $query = $this->model->insert($data);
+
+            if ($query == 1) {
+                echo json_encode(array('status' => 'success'));
+            } else {
+                echo json_encode(array('status' => $query));
+
+            }
+        
+    }
+
+    function layananDatatable()
+    {
+       
+        $queryBuilder = $this->db->select('nama_layanan,id_layanan,kode_layanan,aktif')->from('layanan');
+       
+        $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
+        $datatables->only(['nama_layanan', 'kode_layanan','aktif']);
+
+       
+        $datatables->addColumn('action', function ($row) {
+            return '<td>
+            <div class="dropdown">
+                <a class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
+                    href="#" role="button" data-toggle="dropdown">
+                    <i class="dw dw-more"></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                    <a class="edit-loket dropdown-item" href="javascript:;" id="' . $row->kode_layanan . '"><i class="dw dw-edit2"></i>Edit</a>
+                    <a class="delete-loket dropdown-item" href="javascript:;" id="' . $row->kode_layanan . '"><i class="dw dw-delete-3"></i>Hapus</a>
+                </div>
+            </div>
+        </td>';
+        });
+
+        $datatables->addSequenceNumber();
+        $datatables->addSequenceNumber('rowNumber'); // It will be rowNumber
+
+        $datatables->generate(); // done
+
+    }
+
 }
 
 /* End of file Administrator.php and path \application\controllers\Administrator.php */

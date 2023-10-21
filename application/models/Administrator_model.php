@@ -38,8 +38,12 @@ class Administrator_model extends CI_Model
         }else {
             return "Gagal Memproses";
         }
-        
-        
+    }
+
+    //LAYANAN
+    function cekKodeLayanan($data){
+        $query = $this->db->where("kode_layanan",$data)->get('layanan')->num_rows();
+        return $query;
     }
 
 }
