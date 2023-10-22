@@ -1,4 +1,6 @@
 
+
+
 $(document).ready(function () {
     //reset loket modal
     var originalForm = $("#dalam_loket").clone();
@@ -7,14 +9,15 @@ $(document).ready(function () {
     });
 
     //reset layanan modal
-    var originalForm = $("#div_formLayanan").clone();
+    var originalFormLayanan = $("#div_formLayanan").clone();
     $("#layanan_modal").on("hide.bs.modal", function () {
-        $("#div_formLayanan").replaceWith(originalForm.clone());
+        $("#div_formLayanan").replaceWith(originalFormLayanan.clone());
     });
 });
 
 
 //LOKET
+
 //simpan data loket
 $("#loket-form").submit(function (e) {
 
@@ -94,7 +97,7 @@ $('#tabel-loket tbody').on('click', '.edit-loket', function () {
     var aktif = table.row(row).data()[2];
 
     $("#loket_modal").modal({ backdrop: 'static', keyboard: true, show: true });
-    $("#judul").text("Edit Data");
+
     $("#nama_loket").val(namaLoket);
     $("#id_loket").val(id);
     $('#loket_aktif').val(aktif);
@@ -109,7 +112,7 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
     var aktif = table.row(row).data()[2];
     swal({
         title: 'Hapus data?',
-        text: "Data akan dinonaktifkan",
+        text: "Data akan dihapus dari database",
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya',
@@ -160,13 +163,18 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
 });
 //END LOKET
 
+
+
 //LAYANAN
-//simpan data loket
+//simpan data layanan
+
+
+
 $("#layanan_form").submit(function (e) {
 
     if (document.layanan_form.nama_layanan.value == "") {
-        $(loket_form.nama_loket).addClass("form-control-danger");
-        document.layanan_form.nama_LAYANAN.focus();
+        $(layanan_form.nama_layanan).addClass("form-control-danger");
+        document.layanan_form.nama_layanan.focus();
         return false;
     } else {
         var form = $(this);
@@ -175,13 +183,17 @@ $("#layanan_form").submit(function (e) {
         e.preventDefault();
 
         var url = form.attr('action');
+
         $.ajax({
             type: "POST",
             url: url,
-            data: form.serialize(),
+            data: new FormData(this),
+            processData: false,
+            contentType: false,
+            cache: false,
+            async: false,
             success: function (data) {
                 var obj = JSON.parse(data);
-                console.log(obj.status);
                 if (obj.status == "success") {
                     $("#tabel-layanan").DataTable().ajax.reload();
                     swal(
@@ -193,7 +205,7 @@ $("#layanan_form").submit(function (e) {
                             timer: 1000
                         }
                     )
-                    $("#loket_layanan_modalodal").modal("hide");
+                    $("#layanan_modal").modal("hide");
                 } else {
                     swal(
                         {
@@ -210,8 +222,8 @@ $("#layanan_form").submit(function (e) {
 });
 //end simpan data
 
-//loket datatable
-var table = $('#tabel-layanan').DataTable({
+//layanan datatable
+var tableLayanan = $('#tabel-layanan').DataTable({
     processing: true,
     serverSide: true,
     ajax: {
@@ -219,8 +231,8 @@ var table = $('#tabel-layanan').DataTable({
         method: 'GET', // You are freely to use POST or GET
     }, columnDefs: [
         {
-            targets: 2, render: function (data, type, row) {
-                if (row[2] == "1") {
+            targets: 3, render: function (data, type, row) {
+                if (row[3] == "1") {
                     return 'Aktif'
                 } else {
                     return 'Nonaktif'
@@ -230,32 +242,75 @@ var table = $('#tabel-layanan').DataTable({
     ]
 });
 
-//modal untuk edit loket
-$('#tabel-loket tbody').on('click', '.edit-loket', function () {
+//modal untuk edit layanan
+$('#tabel-layanan tbody').on('click', '.edit-layanan', function (e) {
 
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
+    var form = $("#layanan_form");
 
-    var namaLoket = table.row(row).data()[1];
-    var aktif = table.row(row).data()[2];
+    var btntxt = $("#simpan_layanan", form).val();
 
-    $("#loket_modal").modal({ backdrop: 'static', keyboard: true, show: true });
-    $("#judul").text("Edit Data");
-    $("#nama_loket").val(namaLoket);
-    $("#id_loket").val(id);
-    $('#loket_aktif').val(aktif);
-    $("#div_status").attr('hidden', false);
+    e.preventDefault();
+
+    var namaLayanan = tableLayanan.row(row).data()[1];
+    var kodeLayanan = tableLayanan.row(row).data()[2];
+    var aktif = tableLayanan.row(row).data()[3];
+
+    $("#layanan_modal").modal({ backdrop: 'static', keyboard: true, show: true });
+    $("#judulModalLayanan").text("Edit Data");
+    $("#nama_layanan").val(namaLayanan);
+    $("#id_layanan").val(id);
+    $("#kode_layanan").val(kodeLayanan);
+    $('#layanan_aktif').val(aktif);
+    $("#div_statusLayanan").attr('hidden', false);
+    $("#simpan_layanan").removeAttr('type');
+    $("#simpan_layanan").prop('readonly', true);
+    $("#simpan_layanan").on('click', function () {
+        $("#simpan_layanan", form).val('Tunggu...');
+        $.ajax({
+            type: "POST",
+            url: base_url + "Administrator/updateLayanan",
+            data: $("#layanan_form").serialize(),
+            dataType: "json",
+            success: function (response) {
+
+
+                if (response.status == 'success') {
+                    $("#tabel-layanan").DataTable().ajax.reload();
+                    swal(
+                        {
+                            position: 'top-end',
+                            type: 'success',
+                            title: 'Data berhasil disimpan',
+                            showConfirmButton: false,
+                            timer: 1000
+                        }
+                    )
+                    $("#layaan_modal").modal("hide");
+                } else {
+                    swal(
+                        {
+                            type: 'warning',
+                            title: 'Oops...',
+                            text: response.status,
+                        }
+                    )
+                }
+                $("#simpan_layanan", form).val(btntxt);
+            }
+        });
+    });
 });
 
-//hapus data loket
-$('#tabel-loket tbody').on('click', '.delete-loket', function () {
+$('#tabel-layanan tbody').on('click', '.delete-layanan', function () {
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
-    var namaLoket = table.row(row).data()[1];
-    var aktif = table.row(row).data()[2];
+    var namaLayanan = tableLayanan.row(row).data()[1];
+    var aktif = tableLayanan.row(row).data()[3];
     swal({
         title: 'Hapus data?',
-        text: "Data akan dinonaktifkan",
+        text: "Data akan dihapus dari database",
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Ya',
@@ -270,8 +325,8 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
                 // handle confirm
                 $.ajax({
                     type: "POST",
-                    url: base_url + "Administrator/deleteLoket",
-                    data: { id_loket: id, nama_loket: namaLoket },
+                    url: base_url + "Administrator/deleteLayanan",
+                    data: { id_layanan: id, nama_layanan: namaLayanan },
                     dataType: "json",
                     success: function (response) {
                         if (response.status == "success") {
@@ -280,14 +335,14 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
                                 'Berhasil diproses.',
                                 'success'
                             )
-                            $('#tabel-loket').DataTable().ajax.reload();
+                            $('#tabel-layanan').DataTable().ajax.reload();
                         } else {
                             swal(
                                 'Gagal!',
                                 response.status,
                                 'warning'
                             )
-                            $('#tabel-loket').DataTable().ajax.reload();
+                            $('#tabel-layanan').DataTable().ajax.reload();
                         }
                     }
                 });
@@ -304,3 +359,5 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
     )
 
 });
+
+

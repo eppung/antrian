@@ -6,11 +6,14 @@ class Antrian extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('Antrian_model','model');
+        
     }
 
     public function index()
     {
-$this->load->view('antrian/index');
+        $data['data'] = $this->model->getLayanan();
+$this->load->view('antrian/index',$data);
 
     }
 }

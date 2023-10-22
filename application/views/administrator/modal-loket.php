@@ -4,7 +4,7 @@
 		<div class="modal-content" id="div_loket">
 			<div class="login-box bg-white box-shadow border-radius-10">
 				<div class="login-title">
-					<h2 class="text-center text-primary" id="judul">Tambah Data Loket</h2>
+					<h2 class="text-center text-primary" id="judul">Loket</h2>
 				</div>
 				<form id="loket-form" name="loket_form" action="<?= base_url() . 'Administrator/simpanLoket' ?>">
 				<div id="dalam_loket">

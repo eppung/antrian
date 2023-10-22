@@ -54,22 +54,21 @@
 						</div>
 					</form>
 				</div>
-
-
 			</div>
 			<div class="min-height-200px">
 				<!-- Simple Datatable start -->
 				<div class="card-box mb-30">
 					<div class="pd-20">
 						<h4 class="text-blue h4" style="display: inline-block;">Daftar Layanan</h4>
-						<div style="float: right;"><button type="button" class="btn btn-outline-primary" title="Tambah Data" data-backdrop="static" data-toggle="modal" data-target="#layahan_modal"><i class="icon-copy fa fa-plus" aria-hidden="true" style="font-size: larger;"></i></button></div>
+						<div style="float: right;"><button type="button" class="btn btn-outline-primary" title="Tambah Data" data-backdrop="static" data-toggle="modal" data-target="#layanan_modal"><i class="icon-copy fa fa-plus" aria-hidden="true" style="font-size: larger;"></i></button></div>
 
 					</div>
 					<div class="pb-20">
 						<table class="data-table table stripe hover nowrap" id="tabel-layanan">
 							<thead>
 								<tr>
-									<th class="table-plus datatable-nosort">Nama Layanan</th>
+									<th class="table-plus datatable-nosort">No</th>
+									<th>Nama Layanan</th>
 									<th>Kode</th>
 									<th>Status</th>
 									<th class="datatable-nosort">Aksi</th>
@@ -138,7 +137,6 @@
 	<script src="<?= base_url() . 'assets/src/scripts/custom/validation/ajax.js' ?>"></script>
 	<script src="<?= base_url() . 'assets/src/scripts/custom/validation/core.js' ?>"></script>
 	<script src="<?= base_url() . 'assets/src/scripts/custom/administrator.js' ?>"></script>
+
 	
-
-
 </html>

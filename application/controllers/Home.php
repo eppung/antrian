@@ -10,9 +10,12 @@ class Home extends CI_Controller {
 
     public function index()
     {
+        
         $this->load->view('home/home');
         
     }
+
+   
 }
 
 /* End of file Home.php and path \application\controllers\Home.php */

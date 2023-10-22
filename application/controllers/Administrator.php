@@ -83,7 +83,7 @@ class Administrator extends CI_Controller
         // Here we will select all fields from posts table
 // and make a join with categories table
 // Please note: we don't need to call ->get() here
-        $queryBuilder = $this->db->select('nama_loket,aktif,id_loket')
+        $queryBuilder = $this->db->select('nama_loket,aktif,id_loket')->order_by('nama_loket ASC')
             ->from('loket');
         /**
          * The first parameter is the query builder instance
@@ -119,51 +119,60 @@ class Administrator extends CI_Controller
     }
 
     //LAYANAN
+
+
+
+
+
+
+
+
     function simpanLayanan()
     {
+
+
         if ($_POST["kode_layanan"] == null) {
             $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $randomString = '';
-         
+            $kodeLayanan = '';
+
             for ($i = 0; $i < 4; $i++) {
                 $index = rand(0, strlen($characters) - 1);
-                $randomString .= $characters[$index];
+                $kodeLayanan .= $characters[$index];
             }
             do {
-                $exist = $this->model->cekKodaLayanan($randomString);
+                $exist = $this->model->cekKodeLayanan($kodeLayanan);
             } while ($exist >= 1);
+        } else {
+            $kodeLayanan = $_POST['kode_layanan'];
         }
 
-echo "<pre>";
-print_r ($randomString);
-echo "</pre>";
 
-        exit;
-            $data = array(
-                "nama_loket" => $_POST['nama_loket'],
-                "aktif" => 1
-            );
+        $data = array(
+            "nama_layanan" => $_POST['nama_layanan'],
+            "aktif" => 1,
+            "kode_layanan" => $kodeLayanan
+        );
 
-            $query = $this->model->insert($data);
+        $query = $this->model->insertLayanan($data);
 
-            if ($query == 1) {
-                echo json_encode(array('status' => 'success'));
-            } else {
-                echo json_encode(array('status' => $query));
+        if ($query == 1) {
+            echo json_encode(array('status' => 'success'));
+        } else {
+            echo json_encode(array('status' => $query));
 
-            }
-        
+        }
+
     }
 
     function layananDatatable()
     {
-       
-        $queryBuilder = $this->db->select('nama_layanan,id_layanan,kode_layanan,aktif')->from('layanan');
-       
-        $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
-        $datatables->only(['nama_layanan', 'kode_layanan','aktif']);
 
-       
+        $queryBuilder = $this->db->select('nama_layanan,id_layanan,kode_layanan,aktif')->order_by('nama_layanan ASC')->from('layanan');
+
+        $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
+        $datatables->only(['nama_layanan', 'kode_layanan', 'aktif']);
+
+
         $datatables->addColumn('action', function ($row) {
             return '<td>
             <div class="dropdown">
@@ -172,8 +181,8 @@ echo "</pre>";
                     <i class="dw dw-more"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="edit-loket dropdown-item" href="javascript:;" id="' . $row->kode_layanan . '"><i class="dw dw-edit2"></i>Edit</a>
-                    <a class="delete-loket dropdown-item" href="javascript:;" id="' . $row->kode_layanan . '"><i class="dw dw-delete-3"></i>Hapus</a>
+                    <a class="edit-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-edit2"></i>Edit</a>
+                    <a class="delete-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-delete-3"></i>Hapus</a>
                 </div>
             </div>
         </td>';
@@ -185,6 +194,41 @@ echo "</pre>";
         $datatables->generate(); // done
 
     }
+
+    function updateLayanan()
+    {
+
+        $data = array(
+            'id_layanan' => $_POST['id_layanan'],
+            'nama_layanan' => $_POST['nama_layanan'],
+            'kode_layanan' => $_POST['kode_layanan'],
+            'aktif' => $_POST['layanan_aktif']
+        );
+        $result = $this->model->updateLayanan($data);
+
+        if ($result == 1) {
+            echo json_encode(array('status' => 'success'));
+        } else {
+            echo json_encode(array('status' => $result));
+        }
+    }
+
+    function deleteLayanan()
+    {
+        $data = array(
+            "id_layanan" => $_POST["id_layanan"],
+        );
+
+        $query = $this->model->deleteLayanan($data);
+
+        if ($query == 1) {
+            echo json_encode(array("status" => "success"));
+        } else {
+            echo json_encode(array("status" => $query));
+        }
+    }
+
+
 
 }
 
