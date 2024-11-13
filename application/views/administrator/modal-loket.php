@@ -8,7 +8,7 @@
 				</div>
 				<form id="loket-form" name="loket_form" action="<?= base_url() . 'Administrator/simpanLoket' ?>">
 					
-						<div id="input">
+						<div id="masukan">
 						<div class="input-group custom">
 							<input type="text" class="form-control form-control-lg" placeholder="Nama Loket"
 								name="nama_loket" id="nama_loket" style="text-transform:uppercase">
@@ -28,7 +28,7 @@
 								</div>
 							</div>
 						</div>
-
+</div>
 
 						<div class="form-group" id="ceklis-layanan" hidden>
 							<div class="row">

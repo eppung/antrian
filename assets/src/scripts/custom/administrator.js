@@ -38,11 +38,17 @@ $("#loket-form").submit(function (e) {
         e.preventDefault();
 
         var url = form.attr('action');
-       
+       var checkbox = $(this['ceklis-layanan']).serializeArray();
+       $("#ceklis-layanan input:checkbox").each(function () { 
+        checkbox.push({ name: this.name, value: this.checked });
+        
+	    });
+
+
         $.ajax({
             type: "POST",
             url: url,
-            data: {'loket': $("#input :input").serializeArray(),'layanan': $("#ceklis-layanan :input").serializeArray()},
+            data: {'loket': $("#masukan :input").serializeArray(),'layanan': checkbox},
             success: function (data) {
                 var obj = JSON.parse(data);
                 

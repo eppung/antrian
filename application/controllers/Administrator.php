@@ -39,22 +39,20 @@ class Administrator extends CI_Controller
     function updateLoket()
     {
         $data = array();
-        $layanan=array();
-        
-        
+
         foreach ($_POST['loket'] as $key => $value) {
-            $data[$value['name']] = $value['value'];
-            
+            $data['loket'][$value['name']] = $value['value'];
+
         }
 
         if (isset($_POST['layanan'])) {
             foreach ($_POST['layanan'] as $key => $value) {
 
-                $data['layanan'][$value['name']] = ($value['value']="on" ? 1 :0) ;
-    
+                $data['layanan'][$value['name']] = ($value['value'] == 'true' ? 1 : 0);
+
             }
         }
-       
+
         $query = $this->model->updateLoket($data);
 
         if ($query == 1) {

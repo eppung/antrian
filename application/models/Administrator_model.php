@@ -7,25 +7,25 @@ class Administrator_model extends CI_Model
 
     public function insert($data)
     {
-     
+
         do {
             $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             $charactersLength = strlen($characters);
             $randomString = '';
-        
+
             for ($i = 0; $i < 4; $i++) {
                 $randomString .= $characters[random_int(0, $charactersLength - 1)];
             }
-        
+
             // return $randomString;
         } while ($this->db->where('kode_loket', $randomString)->get('loket')->num_rows() > 0);
 
-        
+
 
         $cek = $this->db->where('nama_loket', $data['nama_loket'])->get('loket')->num_rows();
 
-        $data['kode_loket']=$randomString;
-      
+        $data['kode_loket'] = $randomString;
+
         // cek loket yang sama
         if ($cek > 0) {
             return "Data sudah ada";
@@ -49,17 +49,51 @@ class Administrator_model extends CI_Model
 
     function updateLoket($data)
     {
-        $update = array_diff_key($data, array_flip(['kode_loket']));
+        $result = array();
+        // $this->db->select('loket.kode_loket,  param_antrian.kode_layanan, param_antrian.aktif');
+        $this->db->select('nama_loket,kode_loket,aktif');
+        $this->db->where('loket.kode_loket', $data['loket']['kode_loket']);
+        // $this->db->join('param_antrian', 'param_antrian.kode_loket =loket.kode_loket', 'left');
+        // $this->db->join('layanan', 'param_antrian.kode_layanan = layanan.kode_layanan', 'left');
+        $query = $this->db->get('loket')->row_array();
+        $result['loket'] = $query;
 
-  
-        $query = $this->db->where('kode_loket', $data['kode_loket'])
-        ->update('loket', $update);
+        $this->db->select('kode_loket,kode_layanan');
 
-        if ($this->db->affected_rows() >= 1) {
-            return true;
-        } else {
-            return "Gagal Memproses";
+        $this->db->where('kode_loket', $data['loket']['kode_loket']);
+
+        if ($this->db->get('param_antrian')->num_rows() > 0) {
+            $result['layanan'] = $this->db->get('param_antrian')->row_array();
         }
+
+        $dataToArray = (array) $data;
+    $loketData = array_diff_assoc($data['loket'],$result['loket']);
+        if (isset($result['layanan'])) {
+            $layananLoket = array_diff_assoc($result['layanan'], $dataToArray['layanan']);
+            print_r($layananLoket);
+        }
+    
+        
+$this->db->where('kode_loket',$data['loket']['kode_loket']);
+$this->db->update('loket',$loketData);
+echo "<pre>";
+print_r ($this->db->affected_rows());
+echo "</pre>";
+
+
+
+
+exit;
+
+
+        // $query = $this->db->where('kode_loket', $data['kode_loket'])
+        // ->update('loket', $update);
+
+        // if ($this->db->affected_rows() >= 1) {
+        //     return true;
+        // } else {
+        //     return "Gagal Memproses";
+        // }
     }
 
     //LAYANAN
@@ -110,11 +144,11 @@ class Administrator_model extends CI_Model
 
             $this->load->library('upload', $config); //call library upload 
             //cek jika file ada pada direktori
-            if ($oldImage->image != null && file_exists("./assets/images/iconLayanan/".$oldImage->image)) {
+            if ($oldImage->image != null && file_exists("./assets/images/iconLayanan/" . $oldImage->image)) {
                 //hapus file terpilih
-                unlink("./assets/images/iconLayanan/".$oldImage->image);
+                unlink("./assets/images/iconLayanan/" . $oldImage->image);
             }
-            
+
             if ($this->upload->do_upload("iconLayanan")) { //upload file
 
                 $dataImage = array('upload_data' => $this->upload->data()); //ambil file name yang diupload
@@ -169,20 +203,20 @@ class Administrator_model extends CI_Model
 
     function deleteLayanan($data)
     {
-         $this->db->where('id_layanan', $data["id_layanan"]);
-         $query = $this->db->get('layanan')->row();
-        
-         if (file_exists("./assets/images/iconLayanan/".$query->image)) {
-            if (unlink("./assets/images/iconLayanan/".$query->image)) {
+        $this->db->where('id_layanan', $data["id_layanan"]);
+        $query = $this->db->get('layanan')->row();
+
+        if (file_exists("./assets/images/iconLayanan/" . $query->image)) {
+            if (unlink("./assets/images/iconLayanan/" . $query->image)) {
                 $this->db->where('id_layanan', $data["id_layanan"]);
                 $this->db->delete('layanan');
             }
-            
-         }else {
+
+        } else {
             $this->db->where('id_layanan', $data["id_layanan"]);
             $this->db->delete('layanan');
-         }
-        
+        }
+
 
         if ($this->db->affected_rows() == 1) {
             return true;
@@ -191,25 +225,26 @@ class Administrator_model extends CI_Model
         }
     }
 
-    function get_layanan_by_loket($data) {
+    function get_layanan_by_loket($data)
+    {
         // $CI =& get_instance();
         //  $CI->load->model('Setting_model');
         //  $ClientIP= $CI->Setting_model->get_client_ip()();
 
         //  $this->db->where('ip_komputer', $ClientIP);
         //  $loket = $this->db->get('param_komputer')->row();
-         
+
 
         $this->db->select(' layanan.kode_layanan,layanan.nama_layanan,param_antrian.aktif');
-        
+
         $this->db->join('loket', 'loket.kode_loket = layanan.kode_loket', 'left');
-        $this->db->join('param_antrian', 'param_antrian.kode_loket = loket.kode_loket AND loket.kode_loket = '.'"'. $data['kode_loket'].'"' , 'left');
+        $this->db->join('param_antrian', 'param_antrian.kode_loket = loket.kode_loket AND loket.kode_loket = ' . '"' . $data['kode_loket'] . '"', 'left');
         return $this->db->get('layanan')->result();
-        
+
 
     }
 
-   
+
 
 }
 
