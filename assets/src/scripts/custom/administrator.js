@@ -4,8 +4,11 @@
 $(document).ready(function () {
     //reset loket modal
     var originalForm = $("#dalam_loket").clone();
+    
     $("#loket_modal").on("hide.bs.modal", function () {
         $("#dalam_loket").replaceWith(originalForm.clone());
+        $("#loket-form").attr('action',base_url+'antrian/Administrator/simpanLoket');
+
     });
 
     //reset layanan modal
@@ -13,6 +16,9 @@ $(document).ready(function () {
     $("#layanan_modal").on("hide.bs.modal", function () {
         $("#div_formLayanan").replaceWith(originalFormLayanan.clone());
     });
+
+   
+   
 });
 
 
@@ -32,13 +38,14 @@ $("#loket-form").submit(function (e) {
         e.preventDefault();
 
         var url = form.attr('action');
+       
         $.ajax({
             type: "POST",
             url: url,
-            data: form.serialize(),
+            data: {'loket': $("#input :input").serializeArray(),'layanan': $("#ceklis-layanan :input").serializeArray()},
             success: function (data) {
                 var obj = JSON.parse(data);
-                console.log(obj.status);
+                
                 if (obj.status == "success") {
                     $("#tabel-loket").DataTable().ajax.reload();
                     swal(
@@ -51,6 +58,7 @@ $("#loket-form").submit(function (e) {
                         }
                     )
                     $("#loket_modal").modal("hide");
+                    location.reload();
                 } else {
                     swal(
                         {
@@ -76,8 +84,8 @@ var table = $('#tabel-loket').DataTable({
         method: 'GET', // You are freely to use POST or GET
     }, columnDefs: [
         {
-            targets: 2, render: function (data, type, row) {
-                if (row[2] == "1") {
+            targets: 3, render: function (data, type, row) {
+                if (row[3] == "1") {
                     return 'Aktif'
                 } else {
                     return 'Nonaktif'
@@ -90,18 +98,47 @@ var table = $('#tabel-loket').DataTable({
 //modal untuk edit loket
 $('#tabel-loket tbody').on('click', '.edit-loket', function () {
 
+
     var row = $(this).closest('tr');
     var id = $(this).attr("id");
 
     var namaLoket = table.row(row).data()[1];
-    var aktif = table.row(row).data()[2];
+    var aktif = table.row(row).data()[3];
+    var kode_loket = table.row(row).data()[2];
+
+    $("#loket-form").attr('action', base_url + 'administrator/updateLoket')
 
     $("#loket_modal").modal({ backdrop: 'static', keyboard: true, show: true });
 
     $("#nama_loket").val(namaLoket);
-    $("#id_loket").val(id);
-    $('#loket_aktif').val(aktif);
+    $("#kode_loket").val(kode_loket);
+    $('#aktif').val(aktif).change();
     $("#div_status").attr('hidden', false);
+    $("#ceklis-layanan").attr('hidden', false);
+    $.ajax({
+        type: "POST",
+        url: base_url+'administrator/get_layanan_by_loket',
+        data: {'loket':kode_loket},
+        dataType: "json",
+        success: function (response) {
+           
+            var container = $('#cbcontainer');
+
+            for (let index = 0; index < response.length; index++) {
+                const element = index;
+                var checked
+                if (response[index]['aktif'] == 1) {
+                    checked="checked";
+                }
+                $('<div class="custom-control custom-checkbox mb-5">' +
+                    '<input type="checkbox" class="custom-control-input" id="'+ response[index]['kode_layanan'] +'" name="'+ response[index]['kode_layanan'] +'" '+checked+' />' +
+                    '<label class="custom-control-label" for="'+ response[index]['kode_layanan'] +'">'+response[index]['nama_layanan'] +
+                    '</label></div>').appendTo(container);
+            }
+        }
+    });
+
+
 });
 
 //hapus data loket
@@ -167,9 +204,6 @@ $('#tabel-loket tbody').on('click', '.delete-loket', function () {
 
 //LAYANAN
 //simpan data layanan
-
-
-
 $("#layanan_form").submit(function (e) {
 
     if (document.layanan_form.nama_layanan.value == "") {
@@ -206,6 +240,7 @@ $("#layanan_form").submit(function (e) {
                         }
                     )
                     $("#layanan_modal").modal("hide");
+
                 } else {
                     swal(
                         {
@@ -237,7 +272,8 @@ var tableLayanan = $('#tabel-layanan').DataTable({
                 } else {
                     return 'Nonaktif'
                 }
-            }
+            },
+
         }
     ]
 });
@@ -257,6 +293,7 @@ $('#tabel-layanan tbody').on('click', '.edit-layanan', function (e) {
     var kodeLayanan = tableLayanan.row(row).data()[2];
     var aktif = tableLayanan.row(row).data()[3];
 
+
     $("#layanan_modal").modal({ backdrop: 'static', keyboard: true, show: true });
     $("#judulModalLayanan").text("Edit Data");
     $("#nama_layanan").val(namaLayanan);
@@ -264,17 +301,20 @@ $('#tabel-layanan tbody').on('click', '.edit-layanan', function (e) {
     $("#kode_layanan").val(kodeLayanan);
     $('#layanan_aktif').val(aktif);
     $("#div_statusLayanan").attr('hidden', false);
+    $("#iconLayanan").attr('hidden', true);
     $("#simpan_layanan").removeAttr('type');
     $("#simpan_layanan").prop('readonly', true);
+
+    // pada saat klik simpan (untuk update data)
     $("#simpan_layanan").on('click', function () {
         $("#simpan_layanan", form).val('Tunggu...');
+
         $.ajax({
             type: "POST",
             url: base_url + "Administrator/updateLayanan",
             data: $("#layanan_form").serialize(),
             dataType: "json",
             success: function (response) {
-
 
                 if (response.status == 'success') {
                     $("#tabel-layanan").DataTable().ajax.reload();
@@ -301,6 +341,37 @@ $('#tabel-layanan tbody').on('click', '.edit-layanan', function (e) {
             }
         });
     });
+});
+
+//modal untuk edit layanan
+$('#tabel-layanan tbody').on('click', '.edit-gambar-layanan', function (e) {
+
+    var row = $(this).closest('tr');
+    var id = $(this).attr("id");
+    var form = $("#layanan_form");
+
+    var btntxt = $("#simpan_layanan", form).val();
+
+    var url = form.attr('action');
+
+    e.preventDefault();
+
+    var namaLayanan = tableLayanan.row(row).data()[1];
+    var kodeLayanan = tableLayanan.row(row).data()[2];
+    var aktif = tableLayanan.row(row).data()[3];
+
+    $("#layanan_modal").modal({ backdrop: 'static', keyboard: true, show: true });
+    $("#judulModalLayanan").text("Edit Data");
+    $("#nama_layanan").val(namaLayanan);
+    $("#nama_layanan").attr('readonly', true);
+    $("#id_layanan").val(id);
+    $("#id_layanan").attr('readonly', true);;
+    $("#kode_layanan").val(kodeLayanan);
+    $("#kode_layanan").attr('readonly', true);;
+    $("#iconLayanan").attr('hidden', false);
+
+
+
 });
 
 $('#tabel-layanan tbody').on('click', '.delete-layanan', function () {
@@ -359,5 +430,6 @@ $('#tabel-layanan tbody').on('click', '.delete-layanan', function () {
     )
 
 });
+
 
 

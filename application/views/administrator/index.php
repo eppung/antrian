@@ -71,6 +71,7 @@
 									<th>Nama Layanan</th>
 									<th>Kode</th>
 									<th>Status</th>
+									<th>Image</th>
 									<th class="datatable-nosort">Aksi</th>
 								</tr>
 							</thead>
@@ -94,6 +95,7 @@
 								<tr>
 									<th class="table-plus datatable-nosort">No</th>
 									<th class="table-plus datatable-nosort">Nama Loket</th>
+									<th class="table-plus datatable-nosort">Kode Loket</th>
 									<th>Status</th>
 									<th class="datatable-nosort">Aksi</th>
 								</tr>

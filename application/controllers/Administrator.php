@@ -20,35 +20,41 @@ class Administrator extends CI_Controller
     function simpanLoket()
     {
 
-        if ($_POST['id_loket'] != null) {
+        $data = array(
+            "nama_loket" => $_POST['nama_loket'],
+            "aktif" => 1
+        );
 
-            $this->updateLoket();
+        $query = $this->model->insert($data);
 
+        if ($query == 1) {
+            echo json_encode(array('status' => 'success'));
         } else {
+            echo json_encode(array('status' => $query));
 
-            $data = array(
-                "nama_loket" => $_POST['nama_loket'],
-                "aktif" => 1
-            );
-
-            $query = $this->model->insert($data);
-
-            if ($query == 1) {
-                echo json_encode(array('status' => 'success'));
-            } else {
-                echo json_encode(array('status' => $query));
-
-            }
         }
+
     }
 
     function updateLoket()
     {
-        $data = array(
-            'id_loket' => $_POST['id_loket'],
-            'nama_loket' => $_POST['nama_loket'],
-            'aktif' => $_POST['loket_aktif'],
-        );
+        $data = array();
+        $layanan=array();
+        
+        
+        foreach ($_POST['loket'] as $key => $value) {
+            $data[$value['name']] = $value['value'];
+            
+        }
+
+        if (isset($_POST['layanan'])) {
+            foreach ($_POST['layanan'] as $key => $value) {
+
+                $data['layanan'][$value['name']] = ($value['value']="on" ? 1 :0) ;
+    
+            }
+        }
+       
         $query = $this->model->updateLoket($data);
 
         if ($query == 1) {
@@ -83,14 +89,14 @@ class Administrator extends CI_Controller
         // Here we will select all fields from posts table
 // and make a join with categories table
 // Please note: we don't need to call ->get() here
-        $queryBuilder = $this->db->select('nama_loket,aktif,id_loket')->order_by('nama_loket ASC')
+        $queryBuilder = $this->db->select('nama_loket,kode_loket,aktif,id_loket')->order_by('nama_loket ASC')
             ->from('loket');
         /**
          * The first parameter is the query builder instance
          * and the second is the codeigniter version (3 or 4) 
          */
         $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
-        $datatables->only(['nama_loket', 'aktif']);
+        $datatables->only(['nama_loket', 'kode_loket', 'aktif']);
 
         // Add extra column
         $datatables->addColumn('action', function ($row) {
@@ -101,7 +107,7 @@ class Administrator extends CI_Controller
                     <i class="dw dw-more"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="edit-loket dropdown-item" href="javascript:;" id="' . $row->id_loket . '"><i class="dw dw-edit2"></i>Edit</a>
+                    <a class="edit-loket dropdown-item" href="javascript:;" id="' . $row->id_loket . '"><i class="dw dw-edit2"></i>Edit Data</a>
                     <a class="delete-loket dropdown-item" href="javascript:;" id="' . $row->id_loket . '"><i class="dw dw-delete-3"></i>Hapus</a>
                 </div>
             </div>
@@ -119,58 +125,65 @@ class Administrator extends CI_Controller
     }
 
     //LAYANAN
-
-
-
-
-
-
-
-
     function simpanLayanan()
     {
-
-
-        if ($_POST["kode_layanan"] == null) {
-            $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            $kodeLayanan = '';
-
-            for ($i = 0; $i < 4; $i++) {
-                $index = rand(0, strlen($characters) - 1);
-                $kodeLayanan .= $characters[$index];
-            }
-            do {
-                $exist = $this->model->cekKodeLayanan($kodeLayanan);
-            } while ($exist >= 1);
+        //jika input id layanan ada maka update gambar
+        if ($_POST["id_layanan"] != null) {
+            $this->updateGambarLayanan();
         } else {
-            $kodeLayanan = $_POST['kode_layanan'];
+
+            if ($_POST["kode_layanan"] == null) {
+                $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $kodeLayanan = '';
+
+                for ($i = 0; $i < 4; $i++) {
+                    $index = rand(0, strlen($characters) - 1);
+                    $kodeLayanan .= $characters[$index];
+                }
+                do {
+                    $exist = $this->model->cekKodeLayanan($kodeLayanan);
+                } while ($exist >= 1);
+            } else {
+                $kodeLayanan = $_POST['kode_layanan'];
+            }
+
+
+            $data = array(
+                "nama_layanan" => $_POST['nama_layanan'],
+                "aktif" => 1,
+                "kode_layanan" => $kodeLayanan
+            );
+
+            $query = $this->model->insertLayanan($data);
+
+            if ($query == 1) {
+                echo json_encode(array('status' => 'success'));
+            } else {
+                echo json_encode(array('status' => $query));
+
+            }
         }
 
+    }
 
-        $data = array(
-            "nama_layanan" => $_POST['nama_layanan'],
-            "aktif" => 1,
-            "kode_layanan" => $kodeLayanan
-        );
-
-        $query = $this->model->insertLayanan($data);
-
-        if ($query == 1) {
+    function updateGambarLayanan()
+    {
+        $update = $this->model->updateGambarLayanan();
+        if ($update == 1) {
             echo json_encode(array('status' => 'success'));
         } else {
-            echo json_encode(array('status' => $query));
+            echo json_encode(array('status' => $update));
 
         }
-
     }
 
     function layananDatatable()
     {
 
-        $queryBuilder = $this->db->select('nama_layanan,id_layanan,kode_layanan,aktif')->order_by('nama_layanan ASC')->from('layanan');
+        $queryBuilder = $this->db->select('nama_layanan,id_layanan,kode_layanan,aktif,image')->order_by('nama_layanan ASC')->from('layanan');
 
         $datatables = new Ngekoding\CodeIgniterDataTables\DataTables($queryBuilder, '3');
-        $datatables->only(['nama_layanan', 'kode_layanan', 'aktif']);
+        $datatables->only(['nama_layanan', 'kode_layanan', 'aktif', 'image']);
 
 
         $datatables->addColumn('action', function ($row) {
@@ -181,7 +194,8 @@ class Administrator extends CI_Controller
                     <i class="dw dw-more"></i>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="edit-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-edit2"></i>Edit</a>
+                    <a class="edit-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-edit2"></i>Edit Data</a>
+                    <a class="edit-gambar-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-edit2"></i>Edit Gambar</a>
                     <a class="delete-layanan dropdown-item" href="javascript:;" id="' . $row->id_layanan . '"><i class="dw dw-delete-3"></i>Hapus</a>
                 </div>
             </div>
@@ -226,6 +240,39 @@ class Administrator extends CI_Controller
         } else {
             echo json_encode(array("status" => $query));
         }
+    }
+
+    function get_layanan_by_loket()
+    {
+        $data = array('kode_loket' => $_POST['loket']);
+        $query = $this->model->get_layanan_by_loket($data);
+
+        // echo "<pre>";
+        // print_r ($query);
+        // echo "</pre>";
+
+        echo json_encode($query);
+
+    }
+
+    function getsomedata()
+    {
+
+        // $this->db->where('loket.kode_loket', "AMGS");
+        $this->db->select('param_antrian.kode_loket, param_antrian.kode_layanan,layanan.nama_layanan,param_antrian.aktif');
+
+        $this->db->join('loket', 'loket.kode_loket = layanan.kode_loket', 'left');
+        $this->db->join('param_antrian', 'param_antrian.kode_loket = loket.kode_loket AND loket.kode_loket = "AMGS"', 'left');
+
+        $query = $this->db->get('layanan')->result();
+
+        echo "<pre>";
+        print_r($query);
+        echo "</pre>";
+
+
+
+
     }
 
 

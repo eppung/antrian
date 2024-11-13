@@ -38,9 +38,11 @@
                             <div class="progress-box text-center">
                                 <a href="#">
                                     <div class="img pb-30">
-                                        <img src="<?= base_url() . 'assets/vendors/images/custom/home.png' ?>" alt="">
+                                        <img src="<?= base_url() . 'assets/images/iconLayanan/'.$key->image ?>" alt="">
                                     </div>
-                                    <span class="d-block"><?= $key->nama_layanan ?></i></span>
+                                    <span class="d-block" style="font-weight:1000; font-size: larger;">
+                                        <?= $key->nama_layanan ?></i>
+                                    </span>
                                 </a>
                             </div>
                         </div>
